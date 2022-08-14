@@ -4,6 +4,8 @@ import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import { Button, Tab, Tabs, AppBar, Box } from "@material-ui/core";
+import Login from "./Login";
+import Signup from "./Signup";
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
@@ -87,6 +89,8 @@ export default function TransitionsModal() {
                 <Tab label="Sign Up" />
               </Tabs>
             </AppBar>
+            {value === 0 && <Login handleClose={handleClose}/>}
+            {value === 1 && <Signup handleClose={handleClose}/>}
           </div>
         </Fade>
       </Modal>
