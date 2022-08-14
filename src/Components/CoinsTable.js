@@ -3,7 +3,6 @@ import { CoinList } from "../Config/api";
 import { useHistory } from "react-router-dom";
 import { CryptoState } from "../CryptoContext";
 import Pagination from "@material-ui/lab/Pagination";
-import axios from "axios";
 import {
   Container,
   TableCell,

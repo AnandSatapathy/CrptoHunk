@@ -37,7 +37,7 @@ const darkTheme = createTheme({
 const Header = () => {
   const classes = useStyles();
   const history = useHistory();
-  const {currency,setCurrency} = CryptoState();
+  const {currency,setCurrency,user} = CryptoState();
   console.log(currency);
 
   return (
@@ -65,7 +65,7 @@ const Header = () => {
               <MenuItem value={"USD"}>USD</MenuItem>
               <MenuItem value={"INR"}>INR</MenuItem>
             </Select>
-            <AuthModal/>
+           { user?"Logout":<AuthModal/>}
           </Toolbar>
         </Container>
       </AppBar>
