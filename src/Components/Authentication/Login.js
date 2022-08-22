@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Box, Button, TextField } from "@material-ui/core";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";

@@ -7,11 +7,11 @@ import "react-alice-carousel/lib/alice-carousel.css";
 
 
 ReactDOM.render(
-  <React.StrictMode>
+  
     <CryptoContext>
       <App />
-    </CryptoContext>
-  </React.StrictMode>,
+    </CryptoContext>,
+  
   
   document.getElementById("root")
 );

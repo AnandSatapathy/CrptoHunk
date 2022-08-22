@@ -1,11 +1,13 @@
 import React from "react";
-import { auth, db } from "../../firebase";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
-import { signOut } from "firebase/auth";
-
 import { Avatar, Button } from "@material-ui/core";
-import { CryptoState } from "../../CryptoContext.js";
+import { CryptoState } from "../../CryptoContext";
+import { signOut } from "firebase/auth";
+import { auth, db } from "../../firebase";
+import { numberWithCommas } from "../CoinsTable";
+import { AiFillDelete } from "react-icons/ai";
+import { doc, setDoc } from "firebase/firestore";
 
 const useStyles = makeStyles({
   container: {
@@ -22,20 +24,18 @@ const useStyles = makeStyles({
     flexDirection: "column",
     alignItems: "center",
     gap: "20px",
-    height: "100%",
+    height: "92%",
   },
   logout: {
     height: "8%",
-    width: "60%",
-    alignSelf: "center",
+    width: "100%",
     backgroundColor: "#EEBC1D",
     marginTop: 20,
   },
-
   picture: {
     width: 200,
     height: 200,
-
+    cursor: "pointer",
     backgroundColor: "#EEBC1D",
     objectFit: "contain",
   },
@@ -44,7 +44,6 @@ const useStyles = makeStyles({
     width: "100%",
     backgroundColor: "grey",
     borderRadius: 10,
-    alignSelf: "center",
     padding: 15,
     paddingTop: 10,
     display: "flex",
@@ -53,6 +52,17 @@ const useStyles = makeStyles({
     gap: 12,
     overflowY: "scroll",
   },
+  coin: {
+    padding: 10,
+    borderRadius: 5,
+    color: "black",
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#EEBC1D",
+    boxShadow: "0 0 3px black",
+  },
 });
 
 export default function UserSidebar() {
@@ -60,15 +70,11 @@ export default function UserSidebar() {
   const [state, setState] = React.useState({
     right: false,
   });
+  const { user, setAlert, watchlist, coins, symbol } = CryptoState();
 
-  const { user,setAlert } = CryptoState();
-  console.log("🚀 ~ file: UserSidebar.js ~ line 65 ~ UserSidebar ~ setAlert", setAlert)
-  console.log("🚀 ~ file: UserSidebar.js ~ line 27 ~ UserSidebar ~ user", user);
+  console.log(watchlist, coins);
+
   const toggleDrawer = (anchor, open) => (event) => {
-    console.log(
-      "🚀 ~ file: UserSidebar.js ~ line 26 ~ toggleDrawer ~ event",
-      event
-    );
     if (
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
@@ -77,20 +83,41 @@ export default function UserSidebar() {
     }
 
     setState({ ...state, [anchor]: open });
-    console.log("🚀 ~ file: UserSidebar.js ~ line 41 ~ toggleDrawer ~ ...state", ...state)
   };
-  // sign out Authentication
-  const logOut =()=>{
-      signOut(auth);
+
+  const logOut = () => {
+    signOut(auth);
+    setAlert({
+      open: true,
+      type: "success",
+      message: "Logout Successfull !",
+    });
+
+    toggleDrawer();
+  };
+
+  const removeFromWatchlist = async (coin) => {
+    const coinRef = doc(db, "watchlist", user.uid);
+    try {
+      await setDoc(
+        coinRef,
+        { coins: watchlist.filter((wish) => wish !== coin?.id) },
+        { merge: true }
+      );
 
       setAlert({
-        open:true,
+        open: true,
+        message: `${coin.name} Removed from the Watchlist !`,
         type: "success",
-        message: "Logout successfully !",
       });
-
-      toggleDrawer();
-  }
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
+  };
 
   return (
     <div>
@@ -101,6 +128,7 @@ export default function UserSidebar() {
             style={{
               height: 38,
               width: 38,
+              marginLeft: 15,
               cursor: "pointer",
               backgroundColor: "#EEBC1D",
             }}
@@ -134,6 +162,24 @@ export default function UserSidebar() {
                   <span style={{ fontSize: 15, textShadow: "0 0 5px black" }}>
                     Watchlist
                   </span>
+                  {coins.map((coin) => {
+                    if (watchlist.includes(coin.id))
+                      return (
+                        <div className={classes.coin}>
+                          <span>{coin.name}</span>
+                          <span style={{ display: "flex", gap: 8 }}>
+                            {symbol}{" "}
+                            {numberWithCommas(coin.current_price.toFixed(2))}
+                            <AiFillDelete
+                              style={{ cursor: "pointer" }}
+                              fontSize="16"
+                              onClick={() => removeFromWatchlist(coin)}
+                            />
+                          </span>
+                        </div>
+                      );
+                    else return <></>;
+                  })}
                 </div>
               </div>
               <Button
