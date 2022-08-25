@@ -1,4 +1,5 @@
 # Getting Started with Create React App
+APILINK(https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=250&page=1&sparkline=false)
 
 [screenity.webm](https://user-images.githubusercontent.com/84217973/185993488-2c4096d3-b7ac-4334-b273-4d9ada1d01e9.webm)
 
